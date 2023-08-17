@@ -19,7 +19,7 @@ class Game(
 
     @Composable
     override fun Draw() {
-        var game = GameLevel(level)
+        val game = GameLevel(level)
         val grid = game.grid
         val scope = rememberCoroutineScope()
         val direction = mutableStateOf<Direction>(Direction.Zero)
@@ -27,7 +27,7 @@ class Game(
         val audio = Audio()
         scope.launch {
             while (true) {
-                delay(2000)
+                delay(500)
                 game.printLevel()
                 direction.value = game.movePlayerStraight()
                 countDirection.value += 1
