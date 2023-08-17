@@ -12,43 +12,43 @@ class GameLevel(
             mutableStateOf(0)
         }
     }
-    var playerX: Int = 0
-    var playerY: Int = 0
+    private var playerX: Int = 0
+    private var playerY: Int = 0
     init {
-        // Генерируем координаты игрока
         playerX = generateCenteredCoordinate(size)
         playerY = generateCenteredCoordinate(size)
         grid[playerX][playerY].value = 1
     }
 
-    fun movePlayerRandomly(
-        playerX: Int,
-        playerY: Int
-    ): Pair<Int,Int> {
-        // Генерируем случайное направление для следующего хода
-        val deltaX = Random.nextInt(-1, 2) // -1, 0, 1
-        val deltaY = Random.nextInt(-1, 2) // -1, 0, 1
+    fun movePlayerStraight(): Direction {
+        grid[playerX][playerY].value = 0
 
-        // Вычисляем новые координаты с учетом направления
-        val newX = (playerX + deltaX).coerceIn(0, size - 1)
-        val newY = (playerY + deltaY).coerceIn(0, size - 1)
+        val directions = listOf(Pair(-1, 0), Pair(1, 0), Pair(0, -1), Pair(0, 1))
+        val validDirections = directions.filter { isValidMove(playerX + it.first, playerY + it.second) }
+        val (deltaX, deltaY) = validDirections.random()
 
-        return Pair(newX, newY)
+        playerX = (playerX + deltaX).coerceIn(0, size - 1)
+        playerY = (playerY + deltaY).coerceIn(0, size - 1)
+
+        val direction = when {
+            deltaX == -1 -> Direction.Up
+            deltaX == 1 -> Direction.Down
+            deltaY == -1 -> Direction.Left
+            deltaY == 1 -> Direction.Right
+            else -> Direction.Zero
+        }
+        grid[playerX][playerY].value = 1
+        return direction
     }
 
-    fun movePlayerTo(coords: Pair<Int,Int>) {
-        grid[playerX][playerY].value = 0
-        // Обновляем координаты игрока
-        playerX = coords.first
-        playerY = coords.second
-        // Помещаем игрока на новую позицию
-        grid[playerX][playerY].value = 1
+    private fun isValidMove(x: Int, y: Int): Boolean {
+        return x in 0 until size && y in 0 until size && grid[x][y].value == 0
     }
 
     fun printLevel() {
         for (i in 0 until size) {
             for (j in 0 until size) {
-                print("${grid[i][j]} ")
+                print("${grid[i][j].value} ")
             }
             println()
         }
@@ -56,7 +56,7 @@ class GameLevel(
 
     private fun generateCenteredCoordinate(size: Int): Int {
         val center = size / 2
-        val spread = size * 0.4 // Коэффициент разброса (меньше - шире разброс)
+        val spread = size * 0.4
         return (center + Random.nextGaussian() * spread).toInt().coerceIn(0, size - 1)
     }
 }
