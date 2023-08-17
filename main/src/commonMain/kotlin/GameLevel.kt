@@ -7,18 +7,18 @@ import kotlin.random.Random
 class GameLevel(
     val size: Int
 ) {
-    val grid = mutableStateOf(
+    val grid = Array(size) {
         Array(size) {
-            IntArray(size) { 0 }
+            mutableStateOf(0)
         }
-    )
+    }
     var playerX: Int = 0
     var playerY: Int = 0
     init {
         // Генерируем координаты игрока
         playerX = generateCenteredCoordinate(size)
         playerY = generateCenteredCoordinate(size)
-        grid.value[playerX][playerY] = 1
+        grid[playerX][playerY].value = 1
     }
 
     fun movePlayerRandomly(
@@ -37,18 +37,18 @@ class GameLevel(
     }
 
     fun movePlayerTo(coords: Pair<Int,Int>) {
-        grid.value[playerX][playerY] = 0
+        grid[playerX][playerY].value = 0
         // Обновляем координаты игрока
         playerX = coords.first
         playerY = coords.second
         // Помещаем игрока на новую позицию
-        grid.value[playerX][playerY] = 1
+        grid[playerX][playerY].value = 1
     }
 
     fun printLevel() {
         for (i in 0 until size) {
             for (j in 0 until size) {
-                print("${grid.value[i][j]} ")
+                print("${grid[i][j]} ")
             }
             println()
         }

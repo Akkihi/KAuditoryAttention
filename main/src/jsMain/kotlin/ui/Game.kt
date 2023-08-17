@@ -18,25 +18,26 @@ class Game(
 
     @Composable
     override fun Draw() {
-        var game = remember { mutableStateOf(GameLevel(level)) }
+        var game = GameLevel(level)
+        val grid = game.grid
         val scope = rememberCoroutineScope()
         scope.launch {
             while (true) {
                 delay(500)
-                game.value.printLevel()
-                game.value.movePlayerTo(
-                    game.value.movePlayerRandomly(
-                        game.value.playerX,
-                        game.value.playerY
+                game.printLevel()
+                game.movePlayerTo(
+                    game.movePlayerRandomly(
+                        game.playerX,
+                        game.playerY
                     )
                 )
             }
         }
         Div {
-            ArrayDisplay(game.value.grid.value)
+            ArrayDisplay(grid)
         }
         Div {
-            Text("Coords: ${game.value.playerX} ${game.value.playerY}")
+            Text("Coords: ${game.playerX} ${game.playerY}")
         }
     }
 }
